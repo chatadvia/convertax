@@ -1,48 +1,41 @@
 'use client';
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { TextField, Button } from '@mui/material';
+import { StyledContainer, StyledTitle, StyledForm, StyledButton } from './InvestmentForm.styles';
+import { InvestmentFormProps, Investment } from './InvestmentForm.types';
+import { useGetCurrentDate } from '@/utils/hook/useGetCurrentDate';
 
-// Estilos para garantir a responsividade
-const StyledContainer = styled(Container)(({ theme }) => ({
-  marginTop: '2rem',
-  padding: '0 1rem',
-  [theme.breakpoints.up('sm')]: {
-    padding: '0',
-  },
-}));
+// Função para obter a data atual no formato YYYY-MM-DD
+// const getCurrentDate = () => {
+//   const today = new Date();
+//   const yyyy = today.getFullYear();
+//   const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+//   const dd = String(today.getDate()).padStart(2, '0');
+//   return `${yyyy}-${mm}-${dd}`;
+// };
 
-const StyledTitle = styled(Typography)(({ theme }) => ({
-  marginBottom: '1.5rem',
-  fontSize: '1.5rem',
-  [theme.breakpoints.up('sm')]: {
-    fontSize: '2.125rem',
-  },
-}));
-
-const StyledForm = styled('form')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  alignSelf: 'stretch',
-  [theme.breakpoints.up('sm')]: {
-    alignSelf: 'flex-end',
-    width: 'auto',
-  },
-}));
-
-const InvestmentForm: React.FC = () => {
+const InvestmentForm: React.FC<InvestmentFormProps> = () => {
   const [owner, setOwner] = useState('');
   const [creationDate, setCreationDate] = useState('');
   const [initialValue, setInitialValue] = useState('');
+  const currentDate = useGetCurrentDate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica para criar investimento
-    console.log({ owner, creationDate, initialValue });
+    const newInvestment: Investment = { 
+      id: Date.now(), 
+      owner, 
+      creationDate, 
+      initialValue: parseFloat(initialValue),
+      withdrawals: [] // Inicializa a lista de retiradas
+    };
+
+    // Salva o novo investimento no localStorage
+    const investments = JSON.parse(localStorage.getItem('investments') || '[]');
+    investments.push(newInvestment);
+    localStorage.setItem('investments', JSON.stringify(investments));
+
+    console.log(newInvestment);
   };
 
   const isValid = () => {
@@ -51,7 +44,7 @@ const InvestmentForm: React.FC = () => {
 
   return (
     <StyledContainer maxWidth="sm">
-      <StyledTitle variant="h4" component="h1" gutterBottom>
+      <StyledTitle variant="h4" gutterBottom>
         Criar Investimento
       </StyledTitle>
       <StyledForm onSubmit={handleSubmit}>
@@ -68,6 +61,7 @@ const InvestmentForm: React.FC = () => {
           InputLabelProps={{ shrink: true }}
           value={creationDate}
           onChange={(e) => setCreationDate(e.target.value)}
+          inputProps={{ max: currentDate }} // Define a data máxima como hoje
         />
         <TextField
           fullWidth

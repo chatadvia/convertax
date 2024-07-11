@@ -1,9 +1,13 @@
-import InvestmentForm from '../components/InvestmentForm';
+'use client';
+import InvestmentList from '@/components/InvestmentList';
+import React from 'react';
 
-export default function Home() {
+const InvestmentListPage = () => {
   return (
     <div>
-      <InvestmentForm />
+      <InvestmentList />
     </div>
   );
-}
+};
+
+export default InvestmentListPage;
