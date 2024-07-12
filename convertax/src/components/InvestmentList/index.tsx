@@ -1,12 +1,13 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+import { Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Investment } from './InvestmentList.types';
-import { StyledTableContainer, HeaderContainer } from './InvestmentList.styles';
+import { StyledTableContainer, HeaderContainer, StyledContainer } from './InvestmentList.styles';
 import { useRouter } from 'next/navigation';
 import { calculateCompoundInterest } from '../../utils/investmentUtils';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import ValuationText from '../ValuationText';
+import { investmentsMock } from '@/mocks/investiments';
 
 const InvestmentList: React.FC = () => {
   const [investments, setInvestments] = useState<Investment[]>([]);
@@ -14,7 +15,8 @@ const InvestmentList: React.FC = () => {
 
   useEffect(() => {
     const storedInvestments = JSON.parse(localStorage.getItem('investments') || '[]');
-    setInvestments(storedInvestments);
+    const combinedInvestments = [...investmentsMock, ...storedInvestments];
+    setInvestments(combinedInvestments);
   }, []);
 
   const handleCreateNewInvestment = () => {
@@ -22,7 +24,7 @@ const InvestmentList: React.FC = () => {
   };
 
   return (
-    <Container>
+    <StyledContainer>
       <HeaderContainer>
         <Typography variant="h4" component="h1" gutterBottom>
           Lista de Investimentos
@@ -85,7 +87,7 @@ const InvestmentList: React.FC = () => {
           </TableBody>
         </Table>
       </StyledTableContainer>
-    </Container>
+    </StyledContainer>
   );
 };
 
