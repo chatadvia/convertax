@@ -1,24 +1,18 @@
 'use client';
 import React, { useState } from 'react';
 import { TextField, Button } from '@mui/material';
-import { StyledContainer, StyledTitle, StyledForm, StyledButton } from './InvestmentForm.styles';
+import { StyledContainer, StyledTitle, StyledForm, StyledButton, HeaderContainer } from './InvestmentForm.styles';
 import { InvestmentFormProps, Investment } from './InvestmentForm.types';
 import { useGetCurrentDate } from '@/utils/hook/useGetCurrentDate';
-
-// Função para obter a data atual no formato YYYY-MM-DD
-// const getCurrentDate = () => {
-//   const today = new Date();
-//   const yyyy = today.getFullYear();
-//   const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
-//   const dd = String(today.getDate()).padStart(2, '0');
-//   return `${yyyy}-${mm}-${dd}`;
-// };
+import { useRouter } from 'next/navigation';
+import CurrencyInput from '../CurrencyInput/CurrencyInput';
 
 const InvestmentForm: React.FC<InvestmentFormProps> = () => {
   const [owner, setOwner] = useState('');
   const [creationDate, setCreationDate] = useState('');
-  const [initialValue, setInitialValue] = useState('');
+  const [initialValue, setInitialValue] = useState('0');
   const currentDate = useGetCurrentDate();
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,16 +20,15 @@ const InvestmentForm: React.FC<InvestmentFormProps> = () => {
       id: Date.now(), 
       owner, 
       creationDate, 
-      initialValue: parseFloat(initialValue),
-      withdrawals: [] // Inicializa a lista de retiradas
+      initialValue: parseFloat(initialValue) / 100,
+      withdrawals: []
     };
 
-    // Salva o novo investimento no localStorage
     const investments = JSON.parse(localStorage.getItem('investments') || '[]');
     investments.push(newInvestment);
     localStorage.setItem('investments', JSON.stringify(investments));
 
-    console.log(newInvestment);
+    router.push('/');
   };
 
   const isValid = () => {
@@ -44,9 +37,14 @@ const InvestmentForm: React.FC<InvestmentFormProps> = () => {
 
   return (
     <StyledContainer maxWidth="sm">
-      <StyledTitle variant="h4" gutterBottom>
-        Criar Investimento
-      </StyledTitle>
+      <HeaderContainer>
+        <StyledTitle variant="h4" gutterBottom>
+          Criar Investimento
+        </StyledTitle>
+        <Button variant="contained" color="primary" onClick={() => router.push('/')}>
+          Lista de Investimentos
+        </Button>
+      </HeaderContainer>
       <StyledForm onSubmit={handleSubmit}>
         <TextField
           fullWidth
@@ -61,15 +59,12 @@ const InvestmentForm: React.FC<InvestmentFormProps> = () => {
           InputLabelProps={{ shrink: true }}
           value={creationDate}
           onChange={(e) => setCreationDate(e.target.value)}
-          inputProps={{ max: currentDate }} // Define a data máxima como hoje
+          inputProps={{ max: currentDate }}
         />
-        <TextField
-          fullWidth
-          type="number"
+        <CurrencyInput
           label="Valor Inicial"
           value={initialValue}
-          onChange={(e) => setInitialValue(e.target.value)}
-          inputProps={{ min: "0" }} // Impede que o usuário insira um valor negativo
+          onChange={setInitialValue}
         />
         <StyledButton variant="contained" color="primary" type="submit" disabled={!isValid()}>
           Criar
