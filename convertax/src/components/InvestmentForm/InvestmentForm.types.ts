@@ -1,5 +1,5 @@
 export interface Investment {
-    id: number; // ID único para cada investimento
+    id: number;
     owner: string;
     creationDate: string;
     initialValue: number;

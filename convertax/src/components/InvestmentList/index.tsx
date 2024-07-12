@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
+import { Typography, Table, TableBody, TableCell, TableHead, TableRow, Button } from '@mui/material';
 import { Investment } from './InvestmentList.types';
 import { StyledTableContainer, HeaderContainer, StyledContainer } from './InvestmentList.styles';
 import { useRouter } from 'next/navigation';
